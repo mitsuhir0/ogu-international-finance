@@ -9,13 +9,8 @@ from datetime import datetime
 
 st.set_page_config(layout="wide")
 
-def read_fred(key: str) -> pd.Series:
-  """pandas_datareaderを使ってFREDからデータを取得"""
-  ser = web.DataReader(key, data_source='fred', start='1900-01').iloc[:, 0]
-  return ser
 
-
-def extract_title(string: str) -> tuple[str]:
+def extract_title(string: str) -> list[str]:
     # カッコの位置を探す
     left_paren = string.index("(")
     right_paren = string.index(")")
@@ -24,8 +19,7 @@ def extract_title(string: str) -> tuple[str]:
     before = string[:left_paren].strip()
     inside = string[slice(left_paren+1, right_paren)]
 
-    # タプルにして返す
-    return (before, inside)
+    return [before, inside]
 
 today = datetime.today()
 st.title("国際金融論B")
