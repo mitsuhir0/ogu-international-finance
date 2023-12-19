@@ -21,11 +21,22 @@ def extract_title(string: str) -> list[str]:
 
     return [before, inside]
 
+
+def query_world_usd_share(df: pd.DataFrame) -> pd.DataFrame:
+  return ( 
+      df
+      .query("Area == 'WORLD'")
+      .query("currency_1st == 'USD'")
+      [["Year & Month", "share_1st"]]
+      .set_index("Year & Month")
+  )
+
 today = datetime.today()
-st.title("国際金融論B")
+st.title("国際金融論B 参考資料")
 st.write(f"{today.year}-{today.month}-{today.day}")
 
 st.markdown("## 金融関連指標")
+
 st.markdown("### 為替レート")
 
 title = "Japanese Yen to U.S. Dollar Spot Exchange Rate"
@@ -35,6 +46,21 @@ df = web.DataReader(code, data_source='fred', start=2005)
 st.write(title)
 st.line_chart(df)
 st.write(source)
+
+
+st.write("日本の貿易におけるドル建て比率は高い")
+export_url = "https://www.customs.go.jp/toukei/shinbun/tuuka/timeseriesSCT_e.csv"
+import_url = "https://www.customs.go.jp/toukei/shinbun/tuuka/timeseriesSCT_i.csv"
+export = pd.read_csv(export_url, encoding="shift-jis", skiprows=4).pipe(query_world_usd_share)
+import_to_japan = pd.read_csv(import_url, encoding="shift_jis", skiprows=4).pipe(query_world_usd_share)
+df = export.join(import_to_japan, lsuffix="export", rsuffix="import")
+df.columns = ["export from Japan", "import to Japan"]
+
+date_format = '%Y%b'
+df.index = [datetime.strptime(idx[:7], date_format) for idx in df.index]
+st.write("Dollar Share")
+st.line_chart(df)
+st.write("Source: Trade Statistics of Japan")
 
 
 st.markdown("### 株価")
@@ -55,12 +81,72 @@ st.write(title)
 st.line_chart(df)
 st.write(source)
 
-# TODO: ダウと日経の基準を揃えたやつの比較
+
+# ダウと日経平均をそろえる。為替レートでドル建てにする
+st.write("ダウ平均と日経はどちらも上昇傾向だが…")
+code = "DEXJPUS"
+er = web.DataReader(code, data_source='fred', start=2010)
+
+code = "NIKKEI225"
+nikkei = web.DataReader(code, "fred", start=1900)
+
+code = "DJIA"
+dow = web.DataReader(code, 'fred', start=2000)
+
+idx = dow.index[0]
+df = (
+    dow
+    .join(nikkei)
+    .apply(lambda x: x.div(x[0])*100)
+)
+title = f"{idx.year}-{idx.month}-{idx.day}=100"
+st.write(title)
+st.line_chart(df.dropna())
+
+# ドル建て
+st.write("ドル建てにすると違ってみえる")
+df = (
+    dow
+    .join(nikkei)
+    .join(er)
+)
+df = (
+    df
+    .assign(NIKKEI225_doller=df.NIKKEI225/df.DEXJPUS)
+    .apply(lambda x: x.div(x[0])*100)
+    .drop("DEXJPUS", axis=1)
+)
+title = f"{idx.year}-{idx.month}-{idx.day}=100"
+st.write(title)
+st.line_chart(df.dropna())
 
 
 st.markdown("### 政策金利")
 
-# TODO: 政策金利はまとめて一つのグラフにする
+st.write("日本は低金利政策が続いている")
+us =  "DFF"
+uk = "IUDSOIA"
+jp =  "IRSTCI01JPM156N"
+ecb = "ECBMRRFR"
+df_us = web.DataReader(us, "fred", start=2008)
+df_jp = web.DataReader(jp, "fred", start=2008)
+df_ecb = web.DataReader(ecb, "fred", start=2008)
+df_uk = web.DataReader(uk, "fred", start=2008)
+df = (
+    df_us
+    .join(df_jp)
+    .join(df_ecb)
+    .join(df_uk)
+    .ffill()
+    .rename(columns={
+        us: "United States",
+        jp: "Japan",
+        ecb: "ECB",
+        uk: "United Kingdom"
+        })
+)
+st.line_chart(df)
+
 
 title = "Federal Funds Effective Rate (DFF)"
 source = "Source: Board of Governors of the Federal Reserve System (US)"
@@ -101,7 +187,7 @@ st.write(source)
 
 st.markdown("## 世界的金融危機")
 
-st.markdown("* [住宅価格指数、コピーライトにより複製不可](https://fred.stlouisfed.org/series/csushpinsa)")
+st.markdown("* [住宅価格指数](https://fred.stlouisfed.org/series/csushpinsa)")
 
 
 st.write("失業率は上昇")
@@ -323,12 +409,13 @@ st.line_chart(df)
 st.write(source)
 
 
-st.markdown(
-"""### in progress
+st.write("原油相場")
+title = "Crude Oil Prices: West Texas Intermediate (WTI), - Cushing, Oklahoma"
+code = "DCOILWTICO"
+source = "Source: U.S. Energy Information Administration"
+st.write(title)
+st.line_chart(web.DataReader(code, "fred", start=2000))
 
-*  Coinbase Bitcoin (CBBTCUSD)
-*  CBOE Volatility Index: VIX (VIXCLS)
-*  Crude Oil Prices: West Texas Intermediate (WTI)
 
-""" 
-)
+st.markdown("* [不安定な暗号資産相場](https://fred.stlouisfed.org/series/CBBTCUSD)")
+st.markdown("* [ボラティリティ](https://fred.stlouisfed.org/series/VIXCLS)")
