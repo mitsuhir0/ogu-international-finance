@@ -161,7 +161,6 @@ code =  "IRSTCI01JPM156N"
 title = "Interest Rates: Immediate Rates (< 24 Hours): Call Money/Interbank Rate: Total for Japan"
 source = "Source: Organization for Economic Co-operation and Development"
 df = web.DataReader(code, "fred", start=2008)
-plt.axhline(y=0, color='red', linewidth=0.5)
 st.write(title)
 st.line_chart(df)
 st.write(source)
@@ -192,7 +191,7 @@ st.markdown("* [住宅価格指数](https://fred.stlouisfed.org/series/csushpins
 
 st.write("失業率は上昇")
 title, code = extract_title("Unemployment Rate (UNRATE)	")
-src = "Source: U.S. Bureau of Labor Statistics"
+source = "Source: U.S. Bureau of Labor Statistics"
 df = web.DataReader(code, "fred", start=1990)
 st.write(title)
 st.line_chart(df)
@@ -219,7 +218,6 @@ ser= (
     ["Closing Date"]
 )
 # 0件をindexに追加してプロット
-fig, ax = plt.subplots()
 ser = (
     ser.reindex(range(ser.index.min(), ser.index.max()+1), fill_value=0)
 )
@@ -235,7 +233,6 @@ ser = (
     .sum()
 )
 # プロット
-fig, ax = plt.subplots()
 ser = (
     ser.reindex(range(ser.index.min(), ser.index.max()+1), fill_value=0)
 )
@@ -256,7 +253,6 @@ df = (
     .unstack(level=0)
     [indicator]
 )
-ax.axhline(y=0, color='k', linewidth=0.5)
 st.write(title)
 st.line_chart(df)
 st.write(source)
@@ -319,8 +315,7 @@ for country, code in codes:
   add_df = web.DataReader(code, "fred", start=1995).rename(columns={code: country})
   df = df.join(add_df)
 # プロット
-fig, ax = plt.subplots()
-df = df.loc["2000":]#.plot(title=title, ax=ax)
+df = df.loc["2000":]
 st.write(title)
 st.line_chart(df)
 st.write(source)
@@ -337,7 +332,6 @@ df = (
     .unstack(level=0)
     [indicator]
 )
-ax.axhline(y=0, color='k', linewidth=0.5)
 st.write(title)
 st.line_chart(df)
 st.write(source)
@@ -364,7 +358,6 @@ ser = (
     [indicator]
 )
 ser.index = pd.to_datetime(ser.index)
-ax.axvline(x='1999', color='k', linewidth=0.5)
 st.write(title)
 st.line_chart(ser)
 st.write(source)
@@ -393,7 +386,6 @@ ser = (
     [indicator]
 )
 ser.index = pd.to_datetime(ser.index)
-ax.axvline(x='1999', color='k', linewidth=0.5)
 st.write(title)
 st.line_chart(ser)
 st.write(source)
