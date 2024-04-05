@@ -3,6 +3,7 @@ import datetime
 import pandas as pd
 import pandas_datareader.data as web
 import app
+import plotly.express as px
 
 from pandas_datareader import wb
 from datetime import datetime
@@ -22,7 +23,8 @@ df = (
     [id]
 )
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -49,7 +51,8 @@ for country, code in codes:
 # プロット
 df = df.loc["2000":]
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -65,7 +68,8 @@ df = (
     [indicator]
 )
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 st.write("失業率は改善傾向")
@@ -73,7 +77,8 @@ title, code = app.extract_title("Unemployment Rate: Aged 15-64: All Persons for 
 source = "Source: Organization for Economic Co-operation and Development"
 df = web.DataReader(code, "fred", start=1990)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 

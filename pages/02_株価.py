@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas_datareader.data as web
-
+import plotly.express as px
 
 title = "Dow Jones Industrial Average"
 source = "Source: S&P Dow Jones Indices LLC"
 code = "DJIA"
 df = web.DataReader(code, 'fred', start=2000)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill())
+st.plotly_chart(fig)
 st.write(source)
 
 title = "Nikkei Stock Average, Nikkei 225"
@@ -15,7 +16,8 @@ source = "Source: Nikkei Industry Research Institute"
 code = "NIKKEI225"
 df = web.DataReader(code, "fred", start=1900)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -38,7 +40,8 @@ df = (
 )
 title = f"{idx.year}-{idx.month}-{idx.day}=100"
 st.write(title)
-st.line_chart(df.dropna())
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 
 # ドル建て
 st.write("ドル建てにすると違ってみえる")
@@ -55,4 +58,5 @@ df = (
 )
 title = f"{idx.year}-{idx.month}-{idx.day}=100"
 st.write(title)
-st.line_chart(df.dropna())
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)

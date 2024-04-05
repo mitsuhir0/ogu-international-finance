@@ -4,6 +4,7 @@ import pandas as pd
 import pandas_datareader.data as web
 import app
 from pandas_datareader import wb
+import plotly.express as px
 
 
 st.markdown("## 世界的金融危機")
@@ -15,7 +16,8 @@ title, code = app.extract_title("Unemployment Rate (UNRATE)	")
 source = "Source: U.S. Bureau of Labor Statistics"
 df = web.DataReader(code, "fred", start=1990)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -43,7 +45,8 @@ ser = (
     ser.reindex(range(ser.index.min(), ser.index.max()+1), fill_value=0)
 )
 st.write(title)
-st.bar_chart(ser)
+fig = px.bar(ser)
+st.plotly_chart(fig)
 st.write(source)
 
 # 金額の集計
@@ -58,7 +61,8 @@ ser = (
     ser.reindex(range(ser.index.min(), ser.index.max()+1), fill_value=0)
 )
 st.write(asset_name)
-st.bar_chart(ser)
+fig = px.bar(ser)
+st.plotly_chart(fig)
 st.write(source)
 st.markdown("- [Bank Failures in Brief](https://www.fdic.gov/bank/historical/bank/)")
 
@@ -75,7 +79,8 @@ df = (
     [indicator]
 )
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 st.write("当局はMBSをたくさん購入")
@@ -83,7 +88,8 @@ title, code = app.extract_title("Assets: Securities Held Outright: Mortgage-Back
 src = "Source: Board of Governors of the Federal Reserve System (US)"
 df = web.DataReader(code, "fred", start=1900)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -93,5 +99,6 @@ source = "Source: Board of Governors of the Federal Reserve System (US)"
 code = "WALCL"
 df = web.DataReader(code, "fred", start="2000")
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)

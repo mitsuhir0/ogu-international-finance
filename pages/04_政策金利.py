@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas_datareader.data as web
+import plotly.express as px
 
 st.write("日本は低金利政策が続いている")
 us =  "DFF"
@@ -23,7 +24,8 @@ df = (
         uk: "United Kingdom"
         })
 )
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 
 
 title = "Federal Funds Effective Rate (DFF)"
@@ -31,7 +33,8 @@ source = "Source: Board of Governors of the Federal Reserve System (US)"
 code =  "DFF"
 df = web.DataReader(code, "fred", start=2007)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -40,7 +43,8 @@ title = "Interest Rates: Immediate Rates (< 24 Hours): Call Money/Interbank Rate
 source = "Source: Organization for Economic Co-operation and Development"
 df = web.DataReader(code, "fred", start=2008)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -49,7 +53,8 @@ source = "Source: European Central Bank"
 code = "ECBMRRFR"
 df = web.DataReader(code, "fred", start=2008)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)
 
 
@@ -58,5 +63,6 @@ source = "Source: Bank of England"
 code = "IUDSOIA"
 df = web.DataReader(code, "fred", start=2008)
 st.write(title)
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write(source)

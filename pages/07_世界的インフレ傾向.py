@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import pandas as pd
+import plotly.express as px
 
 from pandas_datareader import wb
 from datetime import datetime
@@ -18,5 +19,6 @@ ser = (
 )
 ser.index = pd.to_datetime(ser.index)
 st.write(title)
-st.line_chart(ser)
+fig = px.line(ser.dropna())
+st.plotly_chart(fig)
 st.write(source)

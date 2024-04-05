@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import pandas as pd
+import plotly.express as px
 
 from datetime import datetime
 
@@ -27,5 +28,6 @@ index = [datetime.strptime(idx[:7], date_format) for idx in df.index]
 datetime_index = pd.DatetimeIndex(index)
 df.index = datetime_index
 st.write("Dollar Share")
-st.line_chart(df)
+fig = px.line(df.ffill().dropna())
+st.plotly_chart(fig)
 st.write("Source: Trade Statistics of Japan")
