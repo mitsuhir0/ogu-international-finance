@@ -36,7 +36,7 @@ idx = dow.index[0]
 df = (
     dow
     .join(nikkei)
-    .apply(lambda x: x.div(x[0])*100)
+    .apply(lambda x: x.div(x.iloc[0])*100)
 )
 title = f"{idx.year}-{idx.month}-{idx.day}=100"
 st.write(title)
