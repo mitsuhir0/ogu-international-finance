@@ -23,7 +23,7 @@ df = (
     [id]
 )
 st.write(title)
-fig = px.line(df.ffill().dropna())
+fig = px.line(df.dropna())
 st.plotly_chart(fig)
 st.write(source)
 
@@ -51,7 +51,7 @@ for country, code in codes:
 # プロット
 df = df.loc["2000":]
 st.write(title)
-fig = px.line(df.ffill().dropna())
+fig = px.line(df.dropna())
 st.plotly_chart(fig)
 st.write(source)
 
